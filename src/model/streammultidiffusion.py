@@ -64,7 +64,7 @@ class StreamMultiDiffusion(nn.Module):
         preprocess_mask_cover_alpha: float = 0.3, # TODO
         prompt_queue_capacity: int = 256,
         mask_type: Literal['discrete', 'semi-continuous', 'continuous'] = 'continuous',
-        use_xformers: bool = True,
+        use_xformers: bool = False,
     ) -> None:
         super().__init__()
 
@@ -137,8 +137,8 @@ class StreamMultiDiffusion(nn.Module):
         }
 
         # Create model
-        self.i2t_processor = Blip2Processor.from_pretrained('Salesforce/blip2-opt-2.7b')
-        self.i2t_model = Blip2ForConditionalGeneration.from_pretrained('Salesforce/blip2-opt-2.7b')
+        #self.i2t_processor = Blip2Processor.from_pretrained('Salesforce/blip2-opt-2.7b')
+        #self.i2t_model = Blip2ForConditionalGeneration.from_pretrained('Salesforce/blip2-opt-2.7b')
 
         self.pipe = load_model(model_key, self.sd_version, self.device, self.dtype)
 
@@ -350,10 +350,7 @@ class StreamMultiDiffusion(nn.Module):
         Returns:
             A single string of text prompt.
         """
-        question = 'Question: What are in the image? Answer:'
-        inputs = self.i2t_processor(image, question, return_tensors='pt')
-        out = self.i2t_model.generate(**inputs, max_new_tokens=77)
-        prompt = self.i2t_processor.decode(out[0], skip_special_tokens=True).strip()
+        prompt = "masterpiece, high quality, 8k, spaces, lot's of stars, beautiful"
         return prompt
 
     @torch.no_grad()
